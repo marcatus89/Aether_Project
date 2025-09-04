@@ -1,0 +1,136 @@
+﻿@page "/"
+@inject IJSRuntime JSRuntime
+
+<PageTitle>AETHER - Premium Sanitary Equipment</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-0">
+    <!-- HERO SECTION -->
+    <div class="hero-container">
+        <div class="hero-content animate-on-scroll is-visible">
+            <h1 class="hero-title">Aether Collection</h1>
+            <p class="hero-subtitle">Discover >></p>
+        </div>
+    </div>
+</MudContainer>
+
+<div class="showcase-section">
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+        <MudGrid Spacing="8" AlignItems="AlignItems.Center" Class="animate-on-scroll">
+            <!-- Nội dung bên trái -->
+            <MudItem xs="12" md="6">
+                <div class="showcase-content">
+                    <h2>Bathroom Categories</h2>
+                    <p>Explore our main bathroom product categories: Toilet, Sink, Shower, Bathtubs, Accessories, Faucets.</p>
+                    <a href="/products" class="showcase-link">Explore Products</a>
+                </div>
+            </MudItem>
+
+            <!-- Hình ảnh dạng grid bên phải -->
+            <MudItem xs="12" md="6">
+                <MudGrid Spacing="2">
+                    <!-- Hàng 1 -->
+                    <MudItem xs="4">
+                        <div class="category-wrapper">
+                            <img src="/images/toilet.png" alt="Toilets" class="category-image" />
+                            <div class="category-overlay">Toilets</div>
+                        </div>
+                    </MudItem>
+                    <MudItem xs="4">
+                        <div class="category-wrapper">
+                            <img src="/images/sink.png" alt="Sinks" class="category-image" />
+                            <div class="category-overlay">Sinks</div>
+                        </div>
+                    </MudItem>
+                    <MudItem xs="4">
+                        <div class="category-wrapper">
+                            <img src="/images/shower.png" alt="Showers" class="category-image" />
+                            <div class="category-overlay">Showers</div>
+                        </div>
+                    </MudItem>
+
+                    <!-- Hàng 2 -->
+                    <MudItem xs="4">
+                        <div class="category-wrapper">
+                            <img src="/images/Bathtubs.png" alt="Bathtubs" class="category-image" />
+                            <div class="category-overlay">Bathtubs</div>
+                        </div>
+                    </MudItem>
+                    <MudItem xs="4">
+                        <div class="category-wrapper">
+                            <img src="/images/Accessories.png" alt="Accessories" class="category-image" />
+                            <div class="category-overlay">Accessories</div>
+                        </div>
+                    </MudItem>
+                    <MudItem xs="4">
+                        <div class="category-wrapper">
+                            <img src="/images/faucets.png" alt="Faucets" class="category-image" />
+                            <div class="category-overlay">Faucets</div>
+                        </div>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</div>
+
+
+
+
+
+<div class="showcase-section" style="background-color: var(--color-background-white);">
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+        <!-- SẢN PHẨM CÔNG CỘNG -->
+        <MudGrid Spacing="8" AlignItems="AlignItems.Center" Class="animate-on-scroll">
+            <MudItem xs="12" md="6" Class="d-flex d-md-none">
+                <div class="showcase-content">
+                    <h2>Public Restroom Products</h2>
+                    <p>Durable design, modern technology, and optimal sanitation solutions for public spaces, from
+                        shopping centers to high-end hotels.</p>
+                    <a href="/products/cong-cong" class="showcase-link">Explore Products</a>
+                </div>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <img src="/images/cong-cong.png" alt="Public Restroom Products" class="showcase-image" />
+            </MudItem>
+            <MudItem xs="12" md="6" Class="d-none d-md-flex">
+                <div class="showcase-content" style="padding-left: 4rem;">
+                    <h2>Public Products</h2>
+                    <p>Durable designs, modern technology, and optimal sanitation solutions for public spaces, from
+                        shopping centers to high-end hotels.</p>
+                    <a href="/products/cong-cong" class="showcase-link">Explore Products</a>
+
+                </div>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</div>
+
+<div class="showcase-section">
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+        <!-- CẢM HỨNG THƯƠNG HIỆU -->
+        <MudGrid Spacing="8" AlignItems="AlignItems.Center" Class="animate-on-scroll">
+            <MudItem xs="12" md="6">
+                <div class="showcase-content">
+                    <h2>Brand Inspiration</h2>
+                    <p>We believe that true beauty comes from the harmony of functionality and aesthetics. Each product
+                        is a commitment to quality and a statement of style.</p>
+                    <a href="/about" class="showcase-link">Our Story</a>
+
+                </div>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <img src="/images/IMAGE4-KBHOME.jpg" alt="Brand Inspiration" class="showcase-image" />
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("siteInterop.initializeScrollAnimation");
+        }
+    }
+}

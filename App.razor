@@ -1,0 +1,24 @@
+﻿<MudThemeProvider Theme="_theme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudPopoverProvider />
+
+<Router AppAssembly="@typeof(Program).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+    </Found>
+</Router>
+
+@code {
+    private MudTheme _theme = new()
+    {
+        Typography = new Typography()
+        {
+            H5 = new DefaultTypography()
+            {
+                FontFamily = new[] { "Playfair Display", "serif" },
+                FontWeight = "600"
+            }
+        }
+    };
+}

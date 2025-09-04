@@ -1,0 +1,241 @@
+:root {
+    --color-primary-gold: #B89F78;
+    --color-background-beige: #F9F8F6;
+    --color-background-white: #FFFFFF;
+    --color-border-gray: #EAEAEA;
+    --color-text-dark: #222222;
+    --color-text-light: #666666;
+    --font-serif: 'Playfair Display', serif;
+    --font-sans: 'Inter', sans-serif;
+}
+
+body {
+    font-family: var(--font-sans);
+    color: var(--color-text-light);
+    background-color: var(--color-background-beige);
+}
+
+.custom-appbar {
+    background-color: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border-gray);
+}
+
+.site-logo {
+    font-family: var(--font-serif);
+    font-weight: 600;
+}
+
+
+
+.hero-container {
+    height: 95vh;
+    background-image: url('/images/background3.png');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+.hero-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* overlay để chữ nổi bật */
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+
+.hero-title {
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: white;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-on-scroll {
+    opacity: 0;
+}
+
+.is-visible {
+    animation: fadeInUp 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+.showcase-section {
+    padding: 6rem 0;
+}
+
+.showcase-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.showcase-content h2 {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    color: var(--color-text-dark);
+    margin-bottom: 1rem;
+}
+
+.showcase-content p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    max-width: 500px;
+}
+
+.showcase-link {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: var(--color-text-dark);
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 2px solid var(--color-primary-gold);
+    padding-bottom: 4px;
+    transition: color 0.3s;
+}
+
+.showcase-link:hover {
+    color: var(--color-primary-gold);
+}
+/* footer */
+    .site-footer {
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .footer-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: white;
+    }
+
+    
+    .footer-links {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .footer-link {
+        color: white;
+        margin: 0; 
+        padding: 0; 
+        transition: color 0.2s ease;
+    }
+
+
+    .footer-link:hover {
+        color: #FFC107;
+        text-decoration: none;
+    }
+
+.category-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease;
+}
+
+
+.category-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+
+.category-wrapper:hover .category-image {
+    transform: scale(1.05);
+}
+
+
+.category-overlay {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: #efeaea;
+    font-weight: 900;
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+/* Hiển thị chữ khi hover */
+.category-wrapper:hover .category-overlay {
+    opacity: 1;
+}
+
+/* Viền neon xanh nhẹ khi hover */
+.category-wrapper:hover {
+    box-shadow: 0 0 12px 2px rgba(0, 200, 255, 0.6);
+}
+/* Input bên trong MudTextField */
+.mud-input-root input {
+    color: white !important;
+}
+
+/* Label mặc định */
+.mud-input-label {
+    color: rgba(255,255,255,0.7) !important;
+}
+
+/* Label khi focus */
+.mud-input-label.mud-focused {
+    color: white !important;
+}
+
+/* Border khi focus */
+.mud-input-root.mud-input-root-outlined.mud-focused {
+    border-color: white !important;
+}
+
+/* Placeholder nếu có */
+.mud-input-input::placeholder {
+    color: rgba(255,255,255,0.5) !important;
+}
+.site-footer {
+    background-color: #1a1a1a;
+    color: #ccc;
+    padding: 4rem 0;
+}
+
+.footer-title {
+    color: white;
+    font-weight: 500;
+}
+
+.footer-divider {
+    background-color: #333 !important;
+}
+
