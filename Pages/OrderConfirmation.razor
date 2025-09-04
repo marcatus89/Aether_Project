@@ -1,0 +1,56 @@
+@page "/order-confirmation/{OrderId:int}"
+@using SanitaryWareECommerce.Application.Interfaces
+@using SanitaryWareECommerce.Application.Dtos
+@inject IOrderService OrderService
+
+<PageTitle>Xác nhận đơn hàng</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-16 mb-16">
+    @if (_order != null)
+    {
+        <MudPaper Class="pa-8 text-center">
+            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Style="font-size: 4rem;" />
+            <MudText Typo="Typo.h4" Style="font-family: var(--font-serif);" Class="mt-4">Cảm ơn bạn đã đặt hàng!</MudText>
+            <MudText Typo="Typo.body1" Class="mt-2">Đơn hàng của bạn đã được nhận. Một email xác nhận đã được gửi đến bạn.</MudText>
+            <MudText Typo="Typo.h6" Class="mt-4">Mã đơn hàng: #@_order.OrderId</MudText>
+        </MudPaper>
+
+        <MudCard Class="mt-8">
+            <MudCardHeader><MudText Typo="Typo.h6">Chi tiết đơn hàng</MudText></MudCardHeader>
+            <MudCardContent>
+                @foreach (var item in _order.OrderItems)
+                {
+                    <div class="d-flex justify-space-between my-2">
+                        <MudText>@item.Name x @item.Quantity</MudText>
+                        <MudText>@((item.Price * item.Quantity).ToString("C0"))</MudText>
+                    </div>
+                }
+                <MudDivider Class="my-2" />
+                <div class="d-flex justify-space-between my-2">
+                    <MudText Typo="Typo.h6">Tổng cộng</MudText>
+                    <MudText Typo="Typo.h6" Color="Color.Primary">@_order.TotalAmount.ToString("C0")</MudText>
+                </div>
+            </MudCardContent>
+        </MudCard>
+
+        <div class="text-center mt-8">
+            <MudButton Href="/products" Variant="Variant.Filled" Color="Color.Primary">Tiếp tục mua sắm</MudButton>
+        </div>
+    }
+    else
+    {
+        <MudAlert Severity="Severity.Warning">Đang tải thông tin đơn hàng...</MudAlert>
+    }
+</MudContainer>
+
+@code {
+    [Parameter]
+    public int OrderId { get; set; }
+
+    private OrderConfirmationDto? _order;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _order = await OrderService.GetOrderForConfirmationAsync(OrderId);
+    }
+}

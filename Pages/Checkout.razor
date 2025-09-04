@@ -1,0 +1,78 @@
+@page "/checkout"
+@using SanitaryWareECommerce.Application.Interfaces
+@using SanitaryWareECommerce.Application.Dtos
+@inject IShoppingCartService ShoppingCartService
+@inject IOrderService OrderService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Thanh toán</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-16 mb-16">
+    <MudText Typo="Typo.h3" Class="mb-8" Style="font-family: var(--font-serif);">Information Payment</MudText>
+    
+    <EditForm Model="_shippingDetails" OnValidSubmit="PlaceOrder">
+        <DataAnnotationsValidator />
+        <MudGrid Spacing="6">
+            <MudItem xs="12" md="7">
+                <MudCard>
+                    <MudCardHeader><MudText Typo="Typo.h6">Information Delivery</MudText></MudCardHeader>
+                    <MudCardContent>
+                        <MudTextField @bind-Value="_shippingDetails.FullName" Label="Họ và tên" For="@(() => _shippingDetails.FullName)" />
+                        <MudTextField @bind-Value="_shippingDetails.Email" Label="Email" Class="mt-4" For="@(() => _shippingDetails.Email)" />
+                        <MudTextField @bind-Value="_shippingDetails.PhoneNumber" Label="Số điện thoại" Class="mt-4" For="@(() => _shippingDetails.PhoneNumber)" />
+                        <MudTextField @bind-Value="_shippingDetails.Address" Label="Địa chỉ" Class="mt-4" For="@(() => _shippingDetails.Address)" Lines="3" />
+                        <MudTextField @bind-Value="_shippingDetails.Note" Label="Ghi chú (tùy chọn)" Class="mt-4" Lines="2" />
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" md="5">
+                <MudPaper Class="pa-6">
+                    <MudText Typo="Typo.h6" GutterBottom="true">Your Order</MudText>
+                    @foreach (var item in _cartItems)
+                    {
+                        <div class="d-flex justify-space-between my-2">
+                            <MudText>@item.Name x @item.Quantity</MudText>
+                            <MudText>@((item.Price * item.Quantity).ToString("C0"))</MudText>
+                        </div>
+                    }
+                    <MudDivider Class="my-4" />
+                    <div class="d-flex justify-space-between my-2">
+                        <MudText Typo="Typo.h6">Total:</MudText>
+                        <MudText Typo="Typo.h6" Color="Color.Primary">@_subTotal.ToString("C0")</MudText>
+                    </div>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Class="mt-6" Size="Size.Large">
+                        Confirm
+                    </MudButton>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    </EditForm>
+</MudContainer>
+
+@code {
+    private List<CartItemDto> _cartItems = new();
+    private decimal _subTotal = 0;
+    private ShippingDetailsDto _shippingDetails = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _cartItems = await ShoppingCartService.GetCartItemsAsync();
+        _subTotal = _cartItems.Sum(i => i.Price * i.Quantity);
+        if (!_cartItems.Any())
+        {
+            NavigationManager.NavigateTo("/cart");
+        }
+    }
+
+    private async Task PlaceOrder()
+    {
+        // 1. Tạo đơn hàng và lấy ID
+        var orderId = await OrderService.CreateOrderAsync(_shippingDetails, _cartItems);
+        
+        // 2. Xóa giỏ hàng
+        await ShoppingCartService.ClearCartAsync();
+        
+        // 3. Điều hướng đến trang xác nhận
+        NavigationManager.NavigateTo($"/order-confirmation/{orderId}"); 
+    }
+}

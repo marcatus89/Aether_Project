@@ -39,6 +39,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ2FydC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/lethien/Desktop/C\#/DoAnTotNghiep/SanitaryWareECommerce.Web/Pages/Checkout.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ2hlY2tvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/lethien/Desktop/C\#/DoAnTotNghiep/SanitaryWareECommerce.Web/Pages/Counter.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ291bnRlci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -51,12 +55,28 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSW5kZXgucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/lethien/Desktop/C\#/DoAnTotNghiep/SanitaryWareECommerce.Web/Pages/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvTG9naW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/lethien/Desktop/C\#/DoAnTotNghiep/SanitaryWareECommerce.Web/Pages/OrderConfirmation.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvT3JkZXJDb25maXJtYXRpb24ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/lethien/Desktop/C\#/DoAnTotNghiep/SanitaryWareECommerce.Web/Pages/ProductDetail.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUHJvZHVjdERldGFpbC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/lethien/Desktop/C\#/DoAnTotNghiep/SanitaryWareECommerce.Web/Pages/Products.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUHJvZHVjdHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/lethien/Desktop/C\#/DoAnTotNghiep/SanitaryWareECommerce.Web/Pages/Register.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUmVnaXN0ZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/lethien/Desktop/C\#/DoAnTotNghiep/SanitaryWareECommerce.Web/Shared/LoginDisplay.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL0xvZ2luRGlzcGxheS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/lethien/Desktop/C\#/DoAnTotNghiep/SanitaryWareECommerce.Web/Shared/MainLayout.razor]

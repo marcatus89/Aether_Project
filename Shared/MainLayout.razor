@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @using MudBlazor
+@using System.Security.Claims
 @using SanitaryWareECommerce.Application.Interfaces
 
 @implements IDisposable
@@ -9,21 +10,17 @@
 <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
-
+<MudPopoverProvider />
 
 <MudLayout>
-    <!-- HEADER -->
     <MudAppBar Elevation="2" Dense="true" Fixed="true" Class="custom-appbar" Color="Color.Dark">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
             OnClick="@DrawerToggle" Class="d-lg-none" />
         <MudLink Href="/" Typo="Typo.h5" Color="Color.Inherit" Underline="Underline.None" Class="site-logo mx-3">
-            <i class="fas-solid fa-deer me-2" style="color: white;"></i>
+            <i class="fa-solid fa-gem me-2" style="color: white;"></i>
             AETHER
         </MudLink>
-
         <MudSpacer />
-
-        <!-- Menu chính (desktop) -->
         <div class="d-none d-lg-flex align-center gap-4">
             <MudNavLink Href="/products" Color="Color.Inherit">Product</MudNavLink>
             <MudNavLink Href="/services" Color="Color.Inherit">Services</MudNavLink>
@@ -32,22 +29,14 @@
             <MudNavLink Href="/blog" Color="Color.Inherit">News</MudNavLink>
             <MudNavLink Href="/contact" Color="Color.Inherit">Contact</MudNavLink>
         </div>
-
         <MudSpacer />
-
-        <!-- Icon và Đăng nhập/Đăng ký -->
         <MudIconButton Icon="@Icons.Material.Outlined.Search" Color="Color.Inherit" Class="mx-1" />
-        
-        <!-- THAY ĐỔI QUAN TRỌNG: ICON GIỎ HÀNG -->
         <MudBadge Content="@_cartItemCount" Color="Color.Secondary" Overlap="true" Class="mx-3" Visible="@(_cartItemCount > 0)">
             <MudIcon Icon="@Icons.Material.Outlined.ShoppingCart" Color="Color.Inherit" />
         </MudBadge>
-
-        <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mx-2" Href="/login">Sign In</MudButton>
-        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Href="/register">Sign Up</MudButton>
+        <LoginDisplay />
     </MudAppBar>
-
-    <!-- DRAWER (mobile) -->
+    
     <MudDrawer @bind-Open="_drawerOpen" Anchor="Anchor.Left" Elevation="1" Variant="@DrawerVariant.Temporary">
         <MudNavMenu>
             <MudNavLink Href="/products">Product</MudNavLink>
@@ -57,12 +46,9 @@
             <MudNavLink Href="/blog">News</MudNavLink>
             <MudNavLink Href="/contact">Contact</MudNavLink>
             <MudDivider />
-            <MudNavLink Href="/login">Sign In</MudNavLink>
-            <MudNavLink Href="/register">Sign Up</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
 
-    <!-- MAIN CONTENT -->
     <MudMainContent Class="pa-0">
         @Body
     </MudMainContent>
@@ -70,44 +56,35 @@
     <!-- FOOTER -->
     <footer class="site-footer" style="background-color:#424242; color:white; padding:4rem 0;">
         <MudContainer MaxWidth="MaxWidth.ExtraLarge">
-            <MudGrid Spacing="6" AlignItems="AlignItems.Start">
-                <!-- About -->
+            <MudGrid Spacing="6">
                 <MudItem xs="12" md="3">
                     <MudText Typo="Typo.h6" Class="footer-title">AETHER</MudText>
                     <MudText Typo="Typo.body2">
-                        Creating luxurious living spaces with high-end sanitary equipment, crafted with precision and
-                        elegance in every detail.
+                        Creating luxurious living spaces with high-end sanitary equipment, crafted with precision and elegance in every detail.
                     </MudText>
                 </MudItem>
-
-                <!-- Links -->
                 <MudItem xs="6" md="3">
                     <MudText Typo="Typo.h6" Class="footer-title">Links</MudText>
                     <div class="footer-links">
-                        <a href="/" class="footer-link">Home</a>
-                        <a href="/products" class="footer-link">Products</a>
-                        <a href="/contact" class="footer-link">Contact</a>
+                        <MudLink Href="/" Class="footer-link">Home</MudLink>
+                        <MudLink Href="/products" Class="footer-link">Products</MudLink>
+                        <MudLink Href="/contact" Class="footer-link">Contact</MudLink>
                     </div>
                 </MudItem>
-
-                <!-- Policies -->
                 <MudItem xs="6" md="3">
                     <MudText Typo="Typo.h6" Class="footer-title">Policies</MudText>
                     <div class="footer-links">
-                        <a href="/policy/shipping" class="footer-link">Shipping</a>
-                        <a href="/policy/warranty" class="footer-link">Warranty</a>
+                        <MudLink Href="/policy/shipping" Class="footer-link">Shipping</MudLink>
+                        <MudLink Href="/policy/warranty" Class="footer-link">Warranty</MudLink>
                     </div>
                 </MudItem>
-
-                <!-- Newsletter -->
                 <MudItem xs="12" md="3">
                     <MudText Typo="Typo.h6" Class="footer-title">Subscribe</MudText>
                     <MudTextField T="string" Label="Your Email" Variant="Variant.Outlined" Class="w-100 mb-2" />
                     <MudButton Color="Color.Secondary" Variant="Variant.Filled">Subscribe</MudButton>
                 </MudItem>
             </MudGrid>
-
-            <MudDivider Class="my-6" Style="border-color:white;" />
+            <MudDivider Class="my-6" Style="border-color:#333;" />
             <MudText Typo="Typo.caption" Align="Align.Center">
                 © @DateTime.Now.Year Aether. All Rights Reserved.
             </MudText>
@@ -116,62 +93,33 @@
 </MudLayout>
 
 @code {
+    private int _cartItemCount = 0;
     private bool _drawerOpen = false;
     private bool _isDarkMode = false;
     private MudThemeProvider _mudThemeProvider = null!;
-
-    // THAY ĐỔI QUAN TRỌNG: Logic cho Giỏ hàng
-    private int _cartItemCount = 0;
+    private MudTheme _theme = new();
 
     protected override async Task OnInitializedAsync()
     {
-        // Đăng ký lắng nghe sự kiện OnCartChanged từ service
         ShoppingCartService.OnCartChanged += HandleCartChanged;
-        // Lấy số lượng ban đầu khi layout được tải
         await UpdateCartCount();
     }
 
     private async void HandleCartChanged()
     {
-        await InvokeAsync(async () =>
-        {
-            await UpdateCartCount();
-        });
+        await InvokeAsync(UpdateCartCount);
     }
-    
+
     private async Task UpdateCartCount()
     {
         _cartItemCount = await ShoppingCartService.GetCartItemCountAsync();
-        StateHasChanged(); // Báo cho Blazor biết cần render lại giao diện
+        StateHasChanged();
     }
 
-    // Hủy đăng ký sự kiện khi component bị hủy để tránh rò rỉ bộ nhớ
     public void Dispose()
     {
         ShoppingCartService.OnCartChanged -= HandleCartChanged;
     }
-
-    private MudTheme _theme = new()
-    {
-        PaletteLight = new PaletteLight
-        {
-            Primary = "#1E88E5",
-            Secondary = "#FFC107",
-            AppbarBackground = "#1E88E5",
-            Background = "#F5F5F5",
-            DrawerBackground = "#FFFFFF",
-            DrawerText = "#333333",
-            DrawerIcon = "#1E88E5"
-        },
-        Typography = new Typography()
-        {
-            H5 = new DefaultTypography()
-            {
-                FontFamily = new[] { "Playfair Display", "serif" },
-                FontWeight = "600"
-            }
-        }
-    };
 
     void DrawerToggle() => _drawerOpen = !_drawerOpen;
 }

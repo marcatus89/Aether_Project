@@ -1,24 +1,21 @@
-﻿<MudThemeProvider Theme="_theme" />
-<MudDialogProvider />
-<MudSnackbarProvider />
-<MudPopoverProvider />
+﻿@using SanitaryWeb.Shared
 
-<Router AppAssembly="@typeof(Program).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-    </Found>
-</Router>
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(Startup).Assembly">
+        <Found Context="routeData">
+            <!-- AuthorizeRouteView sẽ tự động xử lý các trang yêu cầu đăng nhập -->
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <MudContainer MaxWidth="MaxWidth.Small" Class="mt-16 text-center">
+                    <MudText Typo="Typo.h1">404</MudText>
+                    <MudText Typo="Typo.h5" Class="mb-4">Không tìm thấy trang</MudText>
+                    <MudText>Rất tiếc, không có gì ở địa chỉ này.</MudText>
+                    <MudButton Href="/" Variant="Variant.Filled" Color="Color.Primary" Class="mt-8">Về trang chủ</MudButton>
+                </MudContainer>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
 
-@code {
-    private MudTheme _theme = new()
-    {
-        Typography = new Typography()
-        {
-            H5 = new DefaultTypography()
-            {
-                FontFamily = new[] { "Playfair Display", "serif" },
-                FontWeight = "600"
-            }
-        }
-    };
-}

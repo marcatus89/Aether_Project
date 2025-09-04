@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SanitaryWeb")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9f33f82fa3a2035eeb0f5494449117e9a082daff")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b4c86cfadbb2fc7f432fe0b10471b84d425d1540")]
 [assembly: System.Reflection.AssemblyProductAttribute("SanitaryWeb")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SanitaryWeb")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

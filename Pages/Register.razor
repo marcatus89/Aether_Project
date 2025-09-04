@@ -1,0 +1,100 @@
+@page "/register"
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+@using SanitaryWareECommerce.Domain.Entities
+@using Microsoft.Extensions.Logging
+
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject NavigationManager NavigationManager
+@inject ILogger<Register> Logger
+
+<PageTitle>Đăng ký tài khoản</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.ExtraSmall" Class="mt-16 mb-16">
+    <MudPaper Class="pa-8" Elevation="3">
+        <MudText Typo="Typo.h4" Style="font-family: var(--font-serif);" GutterBottom="true" Align="Align.Center">Tạo tài khoản mới</MudText>
+        
+        <EditForm Model="_model" OnValidSubmit="HandleRegistration">
+            <DataAnnotationsValidator />
+
+            @if (_errorMessages.Any())
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    @foreach (var error in _errorMessages)
+                    {
+                        <MudText>@error</MudText>
+                    }
+                </MudAlert>
+            }
+
+            <MudTextField @bind-Value="_model.Email" Label="Email" For="@(() => _model.Email)" InputType="InputType.Email" Variant="Variant.Outlined" Class="mb-4" />
+            <MudTextField @bind-Value="_model.Password" Label="Mật khẩu" For="@(() => _model.Password)" InputType="_isPasswordVisible ? InputType.Text : InputType.Password" Variant="Variant.Outlined" Class="mb-4" Adornment="Adornment.End" AdornmentIcon="@(_isPasswordVisible ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)" OnAdornmentClick="@(() => _isPasswordVisible = !_isPasswordVisible)" />
+            <MudTextField @bind-Value="_model.ConfirmPassword" Label="Xác nhận mật khẩu" For="@(() => _model.ConfirmPassword)" InputType="InputType.Password" Variant="Variant.Outlined" Class="mb-4" />
+            
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" FullWidth="true" Disabled="_isSubmitting">
+                @if (_isSubmitting)
+                {
+                    <MudProgressCircular Indeterminate="true" Size="Size.Small" />
+                }
+                else
+                {
+                    @("Đăng ký")
+                }
+            </MudButton>
+        </EditForm>
+        <MudText Align="Align.Center" Class="mt-4">Đã có tài khoản? <MudLink Href="/login">Đăng nhập ngay</MudLink></MudText>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private class RegisterModel
+    {
+        [Required(ErrorMessage = "Vui lòng nhập email")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập mật khẩu")]
+        [StringLength(100, ErrorMessage = "Mật khẩu phải có ít nhất {2} ký tự.", MinimumLength = 6)]
+        public string Password { get; set; } = string.Empty;
+
+        [Compare("Password", ErrorMessage = "Mật khẩu xác nhận không khớp.")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+
+    private RegisterModel _model = new();
+    private bool _isSubmitting = false;
+    private bool _isPasswordVisible = false;
+    private List<string> _errorMessages = new();
+
+    private async Task HandleRegistration()
+    {
+        _isSubmitting = true;
+        _errorMessages.Clear();
+        try
+        {
+            var user = new ApplicationUser { UserName = _model.Email, Email = _model.Email };
+            var result = await UserManager.CreateAsync(user, _model.Password);
+
+            if (result.Succeeded)
+            {
+                await SignInManager.SignInAsync(user, isPersistent: false);
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                _errorMessages = result.Errors.Select(e => e.Description).ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Lỗi nghiêm trọng trong quá trình đăng ký.");
+            _errorMessages.Add("Đã có lỗi xảy ra phía máy chủ. Vui lòng thử lại sau.");
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
+}
+

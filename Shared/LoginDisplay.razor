@@ -1,0 +1,27 @@
+@using Microsoft.AspNetCore.Identity
+@using SanitaryWareECommerce.Domain.Entities
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject NavigationManager NavigationManager
+
+<AuthorizeView>
+    <Authorized>
+        <div class="d-flex align-center">
+            <MudText Class="d-none d-md-block">Xin chào, @context.User.Identity?.Name</MudText>
+            <MudButton Variant="Variant.Text" OnClick="HandleLogout" Class="ml-2">Sign out</MudButton>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mx-2" Href="/login">Sign In</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Href="/register">Sign Up</MudButton>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private async Task HandleLogout()
+    {
+        await SignInManager.SignOutAsync();
+        // forceLoad: true đảm bảo trang được tải lại hoàn toàn để xóa mọi trạng thái cũ
+        NavigationManager.NavigateTo("/", forceLoad: true);
+    }
+}

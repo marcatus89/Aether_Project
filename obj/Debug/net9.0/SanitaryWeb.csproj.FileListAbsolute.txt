@@ -228,3 +228,8 @@
 /Users/lethien/Desktop/C#/DoAnTotNghiep/SanitaryWareECommerce.Web/obj/Debug/net9.0/SanitaryWeb.pdb
 /Users/lethien/Desktop/C#/DoAnTotNghiep/SanitaryWareECommerce.Web/obj/Debug/net9.0/SanitaryWeb.genruntimeconfig.cache
 /Users/lethien/Desktop/C#/DoAnTotNghiep/SanitaryWareECommerce.Web/obj/Debug/net9.0/ref/SanitaryWeb.dll
+/Users/lethien/Desktop/C#/DoAnTotNghiep/SanitaryWareECommerce.Web/bin/Debug/net9.0/Microsoft.AspNetCore.Cryptography.Internal.dll
+/Users/lethien/Desktop/C#/DoAnTotNghiep/SanitaryWareECommerce.Web/bin/Debug/net9.0/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+/Users/lethien/Desktop/C#/DoAnTotNghiep/SanitaryWareECommerce.Web/bin/Debug/net9.0/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+/Users/lethien/Desktop/C#/DoAnTotNghiep/SanitaryWareECommerce.Web/bin/Debug/net9.0/Microsoft.Extensions.Identity.Core.dll
+/Users/lethien/Desktop/C#/DoAnTotNghiep/SanitaryWareECommerce.Web/bin/Debug/net9.0/Microsoft.Extensions.Identity.Stores.dll

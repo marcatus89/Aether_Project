@@ -46,18 +46,18 @@
             </MudItem>
             <MudItem xs="12" md="4">
                 <MudPaper Class="pa-6 mud-elevation-1">
-                    <MudText Typo="Typo.h5" GutterBottom="true">Tóm tắt đơn hàng</MudText>
+                    <MudText Typo="Typo.h5" GutterBottom="true">Order Summary</MudText>
                     <div class="d-flex justify-space-between my-2">
                         <MudText>Tạm tính</MudText>
                         <MudText>@_subTotal.ToString("C0")</MudText>
                     </div>
                     <MudDivider Class="my-4" />
                     <div class="d-flex justify-space-between my-2">
-                        <MudText Typo="Typo.h6">Tổng cộng</MudText>
+                        <MudText Typo="Typo.h6">Total:</MudText>
                         <MudText Typo="Typo.h6" Color="Color.Primary">@_subTotal.ToString("C0")</MudText>
                     </div>
                     <MudButton Href="/checkout" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Class="mt-6" Size="Size.Large">
-                        Tiến hành thanh toán
+                        Proceed to Payment
                     </MudButton>
                 </MudPaper>
             </MudItem>
@@ -65,7 +65,7 @@
     }
     else
     {
-        <MudAlert Severity="Severity.Info">Giỏ hàng của bạn đang trống. <MudLink Href="/products">Tiếp tục mua sắm</MudLink></MudAlert>
+        <MudAlert Severity="Severity.Info">Your Cart Is Empty. <MudLink Href="/products">Continue To Shopping</MudLink></MudAlert>
     }
 </MudContainer>
 
