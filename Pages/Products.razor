@@ -1,0 +1,326 @@
+@page "/products"
+@using SanitaryWareECommerce.Application.Interfaces
+@using SanitaryWareECommerce.Application.Dtos
+@inject IProductService ProductService
+@inject ICategoryService CategoryService
+@inject IBrandService BrandService
+
+<PageTitle>Sản phẩm - AETHER</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16 mb-16">
+    <MudText Typo="Typo.h3" Class="mb-4 page-title">Tất cả sản phẩm</MudText>
+    
+    <MudGrid Spacing="6">
+        <!-- BỘ LỌC BÊN TRÁI -->
+        <MudItem xs="12" md="3">
+            <MudPaper Outlined="true" Class="pa-4 filter-panel">
+                <MudText Typo="Typo.h6" GutterBottom="true">Lọc sản phẩm</MudText>
+                <MudDivider Class="mb-4" />
+
+                <!-- Lọc theo Danh mục -->
+                <MudText Typo="Typo.subtitle1" Class="mb-2">Danh mục</MudText>
+                @foreach (var category in _categories)
+                {
+                    <MudCheckBox T="bool" 
+                                 Label="@category.Name" 
+                                 Dense="true" 
+                                 CheckedChanged="@(async (bool isChecked) => await OnCategoryFilterChanged(isChecked, category.Id))">
+                    </MudCheckBox>
+                }
+                
+                <MudDivider Class="my-4" />
+
+                <!-- Lọc theo Thương hiệu -->
+                <MudText Typo="Typo.subtitle1" Class="mb-2">Thương hiệu</MudText>
+                @foreach (var brand in _brands)
+                {
+                    <MudCheckBox T="bool" 
+                                 Label="@brand.Name" 
+                                 Dense="true" 
+                                 CheckedChanged="@(async (bool isChecked) => await OnBrandFilterChanged(isChecked, brand.Id))">
+                    </MudCheckBox>
+                }
+            </MudPaper>
+        </MudItem>
+
+        <!-- LƯỚI SẢN PHẨM BÊN PHẢI -->
+        <MudItem xs="12" md="9">
+            <!-- Search và Sort -->
+            <MudPaper Class="pa-4 mb-4" Outlined="true">
+                <MudGrid AlignItems="Center">
+                    <MudItem xs="12" md="6">
+                        <MudTextField @bind-Value="_searchTerm" 
+                                      Label="Tìm kiếm sản phẩm" 
+                                      Adornment="Adornment.Start" 
+                                      AdornmentIcon="@Icons.Material.Filled.Search"
+                                      OnKeyUp="@OnSearchChanged"
+                                      Clearable="true" />
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudSelect T="string" @bind-Value="_sortBy" Label="Sắp xếp theo" OnSelectionChanged="@OnSortChanged">
+                            <MudSelectItem Value="@("name")">Tên A-Z</MudSelectItem>
+                            <MudSelectItem Value="@("price-low")">Giá thấp đến cao</MudSelectItem>
+                            <MudSelectItem Value="@("price-high")">Giá cao đến thấp</MudSelectItem>
+                            <MudSelectItem Value="@("newest")">Mới nhất</MudSelectItem>
+                        </MudSelect>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+
+            <MudGrid Spacing="3">
+                @if (_isLoading)
+                {
+                    <MudItem xs="12" Class="d-flex justify-center">
+                        <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+                    </MudItem>
+                }
+                else if (_filteredProducts.Any())
+                {
+                    @foreach (var product in _paginatedProducts)
+                    {
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudCard Class="product-card hover-lift">
+                                <div class="product-image-container">
+                                    <img src="@product.ImageUrl" alt="@product.Name" />
+                                    <div class="product-tags">
+                                        <MudChip T="string" Text="Mới" Color="Color.Info" Size="Size.Small"/>
+                                    </div>
+                                    <div class="product-actions">
+                                        <MudIconButton Icon="@Icons.Material.Outlined.FavoriteBorder" 
+                                                       Size="Size.Small" 
+                                                       OnClick="@(() => AddToWishlist(product.Id))" />
+                                        <MudIconButton Icon="@Icons.Material.Outlined.AddShoppingCart" 
+                                                       Size="Size.Small"
+                                                       OnClick="@(() => AddToCart(product.Id))" />
+                                    </div>
+                                </div>
+                                <MudCardContent>
+                                    <MudText Typo="Typo.body2">@product.BrandName.ToUpper()</MudText>
+                                    <MudText Typo="Typo.h6" Class="product-title">@product.Name</MudText>
+                                    <div class="d-flex justify-space-between align-center mt-2">
+                                        <MudText Typo="Typo.h6" Style="font-weight:600;">@product.Price.ToString("C0")</MudText>
+                                        <MudRating ReadOnly="true" SelectedValue="5" />
+                                    </div>
+                                </MudCardContent>
+                                <MudCardActions>
+                                    <MudButton Variant="Variant.Filled" 
+                                               Color="Color.Primary" 
+                                               FullWidth="true"
+                                               OnClick="@(() => ViewProductDetails(product.Id))">
+                                        Xem chi tiết
+                                    </MudButton>
+                                </MudCardActions>
+                            </MudCard>
+                        </MudItem>
+                    }
+                }
+                else
+                {
+                    <MudItem xs="12" Class="d-flex justify-center">
+                        <MudAlert Severity="Severity.Info">
+                            Không tìm thấy sản phẩm nào phù hợp với bộ lọc của bạn.
+                        </MudAlert>
+                    </MudItem>
+                }
+            </MudGrid>
+
+            <!-- Pagination -->
+            @if (_filteredProducts.Any() && _totalPages > 1)
+            {
+                <MudPagination Count="_totalPages" 
+                               Selected="_currentPage" 
+                               SelectedChanged="@OnPageChanged" 
+                               Class="mt-6 d-flex justify-center" />
+            }
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private IEnumerable<ProductDto> _allProducts = new List<ProductDto>();
+    private IEnumerable<CategoryDto> _categories = new List<CategoryDto>();
+    private IEnumerable<BrandDto> _brands = new List<BrandDto>();
+
+    private HashSet<int> _selectedCategoryIds = new HashSet<int>();
+    private HashSet<int> _selectedBrandIds = new HashSet<int>();
+    
+    private string _searchTerm = string.Empty;
+    private string _sortBy = "name";
+    private bool _isLoading = false;
+    private int _currentPage = 1;
+    private int _totalPages = 1;
+    private int _pageSize = 12;
+
+    // Computed properties
+    private IEnumerable<ProductDto> _filteredProducts => GetFilteredProducts();
+    private IEnumerable<ProductDto> _paginatedProducts => GetPaginatedProducts();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isLoading = true;
+        await Task.WhenAll(
+            LoadProducts(),
+            LoadCategories(),
+            LoadBrands()
+        );
+        _isLoading = false;
+        CalculatePagination();
+    }
+
+    private async Task LoadProducts()
+    {
+        try
+        {
+            // CHỈ DÙNG 2 THAM SỐ NHƯ SERVICE HIỆN TẠI
+            _allProducts = await ProductService.GetFilteredProductsAsync(_selectedCategoryIds, _selectedBrandIds);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading products: {ex.Message}");
+            _allProducts = new List<ProductDto>();
+        }
+    }
+
+    private async Task LoadCategories()
+    {
+        try
+        {
+            _categories = await CategoryService.GetAllCategoriesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading categories: {ex.Message}");
+            _categories = new List<CategoryDto>();
+        }
+    }
+
+    private async Task LoadBrands()
+    {
+        try
+        {
+            _brands = await BrandService.GetAllBrandsAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading brands: {ex.Message}");
+            _brands = new List<BrandDto>();
+        }
+    }
+
+    private IEnumerable<ProductDto> GetFilteredProducts()
+    {
+        var filtered = _allProducts.AsEnumerable();
+
+        // Search filter
+        if (!string.IsNullOrWhiteSpace(_searchTerm))
+        {
+            filtered = filtered.Where(p => 
+                p.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                p.BrandName.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // Sort
+        filtered = _sortBy switch
+        {
+            "name" => filtered.OrderBy(p => p.Name),
+            "price-low" => filtered.OrderBy(p => p.Price),
+            "price-high" => filtered.OrderByDescending(p => p.Price),
+            "newest" => filtered.OrderByDescending(p => p.Id),
+            _ => filtered.OrderBy(p => p.Name)
+        };
+
+        return filtered;
+    }
+
+    private IEnumerable<ProductDto> GetPaginatedProducts()
+    {
+        return _filteredProducts
+            .Skip((_currentPage - 1) * _pageSize)
+            .Take(_pageSize);
+    }
+
+    private void CalculatePagination()
+    {
+        var totalProducts = _filteredProducts.Count();
+        _totalPages = (int)Math.Ceiling((double)totalProducts / _pageSize);
+        
+        // Ensure current page is valid
+        if (_currentPage > _totalPages && _totalPages > 0)
+        {
+            _currentPage = _totalPages;
+        }
+    }
+
+    private async Task OnCategoryFilterChanged(bool isChecked, int categoryId)
+    {
+        if (isChecked)
+        {
+            _selectedCategoryIds.Add(categoryId);
+        }
+        else
+        {
+            _selectedCategoryIds.Remove(categoryId);
+        }
+        
+        _currentPage = 1;
+        await LoadProducts();
+        CalculatePagination();
+        StateHasChanged();
+    }
+
+    private async Task OnBrandFilterChanged(bool isChecked, int brandId)
+    {
+        if (isChecked)
+        {
+            _selectedBrandIds.Add(brandId);
+        }
+        else
+        {
+            _selectedBrandIds.Remove(brandId);
+        }
+        
+        _currentPage = 1;
+        await LoadProducts();
+        CalculatePagination();
+        StateHasChanged();
+    }
+
+    private void OnSearchChanged()
+    {
+        _currentPage = 1;
+        CalculatePagination();
+        StateHasChanged();
+    }
+
+    private void OnSortChanged(string sortValue)
+    {
+        _sortBy = sortValue;
+        CalculatePagination();
+        StateHasChanged();
+    }
+
+    private void OnPageChanged(int page)
+    {
+        _currentPage = page;
+        StateHasChanged();
+    }
+
+    // Action methods
+    private async Task AddToWishlist(int productId)
+    {
+        Console.WriteLine($"Added product {productId} to wishlist");
+        // TODO: Implement wishlist service
+    }
+
+    private async Task AddToCart(int productId)
+    {
+        Console.WriteLine($"Added product {productId} to cart");
+
+    }
+
+    private void ViewProductDetails(int productId)
+    {
+        Console.WriteLine($"Viewing product details for {productId}");
+
+    }
+}

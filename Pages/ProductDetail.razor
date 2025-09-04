@@ -1,0 +1,112 @@
+@page "/product/{ProductId:int}"
+@using SanitaryWareECommerce.Application.Interfaces
+@using SanitaryWareECommerce.Application.Dtos
+@inject IProductService ProductService
+@inject IShoppingCartService ShoppingCartService
+@inject ISnackbar Snackbar
+
+<PageTitle>@(_product?.Name ?? "Chi tiết sản phẩm")</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16 mb-16">
+    @if (_isLoading)
+    {
+        <div class="d-flex justify-center my-16">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        </div>
+    }
+    else if (_product != null)
+    {
+        <MudGrid Spacing="6">
+            <!-- THƯ VIỆN ẢNH BÊN TRÁI -->
+            <MudItem xs="12" md="6">
+                <MudPaper Class="pa-4" Outlined="true">
+                    <MudImage Src="@_product.ImageUrl" Fluid="true" Style="height: 500px; object-fit: contain;" />
+                </MudPaper>
+                <!-- Thêm gallery ảnh nhỏ ở đây nếu cần -->
+            </MudItem>
+
+            <!-- THÔNG TIN SẢN PHẨM BÊN PHẢI -->
+            <MudItem xs="12" md="6">
+                <MudText Typo="Typo.h6" Color="Color.Secondary">@_product.BrandName.ToUpper()</MudText>
+                <MudText Typo="Typo.h3" Style="font-family: var(--font-serif);" GutterBottom="true">@_product.Name</MudText>
+                <MudText Typo="Typo.h4" Color="Color.Primary" Class="my-4">@_product.Price.ToString("C0")</MudText>
+                <MudText Typo="Typo.body1" Class="mb-4">
+                    @_product.Description
+                </MudText>
+
+                <MudDivider Class="my-6" />
+
+                <!-- BỘ CHỌN SỐ LƯỢNG VÀ NÚT THÊM VÀO GIỎ -->
+                <div class="d-flex align-center gap-4 mb-6">
+                    <MudNumericField @bind-Value="_quantity" Label="Số lượng" Variant="Variant.Outlined" Min="1" Max="10" Style="max-width: 120px;" />
+                    <MudButton Variant="Variant.Filled" 
+                               Color="Color.Primary" 
+                               Size="Size.Large" 
+                               FullWidth="true" 
+                               StartIcon="@Icons.Material.Filled.AddShoppingCart"
+                               OnClick="AddToCart"
+                               Class="flex-grow-1">
+                        Thêm vào giỏ hàng
+                    </MudButton>
+                </div>
+
+                <MudText Typo="Typo.body2">Mã SP: @_product.SKU</MudText>
+                <MudText Typo="Typo.body2">Danh mục: @_product.CategoryName</MudText>
+            </MudItem>
+        </MudGrid>
+
+        <!-- TABS MÔ TẢ CHI TIẾT -->
+        <MudTabs Elevation="2" Rounded="true" Class="mt-16">
+            <MudTabPanel Text="Mô tả chi tiết">
+                <MudText Class="pa-4">Đây là phần mô tả chi tiết, dài hơn về sản phẩm, giải thích sâu về công nghệ, thiết kế và các lợi ích mà nó mang lại. Bạn có thể dùng HTML để định dạng văn bản này.</MudText>
+            </MudTabPanel>
+            <MudTabPanel Text="Thông số kỹ thuật">
+                <MudSimpleTable Class="pa-4">
+                    <tbody>
+                        @foreach (var spec in _product.Specifications)
+                        {
+                            <tr>
+                                <td>@spec.Key</td>
+                                <td>@spec.Value</td>
+                            </tr>
+                        }
+                    </tbody>
+                </MudSimpleTable>
+            </MudTabPanel>
+            <MudTabPanel Text="Đánh giá">
+                <MudText Class="pa-4">Tính năng đánh giá của khách hàng sẽ được phát triển ở các bước sau.</MudText>
+            </MudTabPanel>
+        </MudTabs>
+    }
+    else
+    {
+        <MudAlert Severity="Severity.Error">Không tìm thấy sản phẩm.</MudAlert>
+    }
+</MudContainer>
+
+@code {
+    [Parameter]
+    public int ProductId { get; set; }
+
+    private ProductDetailDto? _product;
+    private bool _isLoading = false;
+    private int _quantity = 1;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _isLoading = true;
+        _product = await ProductService.GetProductDetailByIdAsync(ProductId);
+        _isLoading = false;
+    }
+
+    private async Task AddToCart()
+    {
+        if (_product != null)
+        {
+            await ShoppingCartService.AddToCartAsync(_product, _quantity);
+            // Hiển thị thông báo thành công cho người dùng
+            Snackbar.Add($"Đã thêm '{_product.Name}' vào giỏ hàng!", Severity.Success);
+        }
+    }
+}
+

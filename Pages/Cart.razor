@@ -1,0 +1,120 @@
+@page "/cart"
+@using SanitaryWareECommerce.Application.Interfaces
+@using SanitaryWareECommerce.Application.Dtos
+@inject IShoppingCartService ShoppingCartService
+@inject NavigationManager NavigationManager
+
+@implements IDisposable
+
+<PageTitle>Giỏ hàng</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16 mb-16">
+    <MudText Typo="Typo.h3" Class="mb-8" Style="font-family: var(--font-serif);">Giỏ hàng của bạn</MudText>
+    
+    @if (_cartItems.Any())
+    {
+        <MudGrid Spacing="6">
+            <MudItem xs="12" md="8">
+                <MudTable Items="_cartItems" Hover="true" Class="mud-elevation-1">
+                    <HeaderContent>
+                        <MudTh>Sản phẩm</MudTh>
+                        <MudTh>Giá</MudTh>
+                        <MudTh>Số lượng</MudTh>
+                        <MudTh>Tổng</MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Sản phẩm">
+                            <div class="d-flex align-center">
+                                <img src="@context.ImageUrl" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;" class="mr-4" />
+                                <MudText>@context.Name</MudText>
+                            </div>
+                        </MudTd>
+                        <MudTd DataLabel="Giá">@context.Price.ToString("C0")</MudTd>
+                        <MudTd DataLabel="Số lượng">
+                            <!-- SỬA LỖI TẠI ĐÂY: Tách @bind-Value thành Value và ValueChanged -->
+                            <MudNumericField Value="context.Quantity" Min="1" Max="10" Style="max-width: 100px;"
+                                             ValueChanged="@((int qty) => UpdateQuantity(context.ProductId, qty))" />
+                        </MudTd>
+                        <MudTd DataLabel="Tổng">@((context.Price * context.Quantity).ToString("C0"))</MudTd>
+                        <MudTd>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" 
+                                           OnClick="@(() => RemoveItem(context.ProductId))" />
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudItem>
+            <MudItem xs="12" md="4">
+                <MudPaper Class="pa-6 mud-elevation-1">
+                    <MudText Typo="Typo.h5" GutterBottom="true">Tóm tắt đơn hàng</MudText>
+                    <div class="d-flex justify-space-between my-2">
+                        <MudText>Tạm tính</MudText>
+                        <MudText>@_subTotal.ToString("C0")</MudText>
+                    </div>
+                    <MudDivider Class="my-4" />
+                    <div class="d-flex justify-space-between my-2">
+                        <MudText Typo="Typo.h6">Tổng cộng</MudText>
+                        <MudText Typo="Typo.h6" Color="Color.Primary">@_subTotal.ToString("C0")</MudText>
+                    </div>
+                    <MudButton Href="/checkout" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Class="mt-6" Size="Size.Large">
+                        Tiến hành thanh toán
+                    </MudButton>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    }
+    else
+    {
+        <MudAlert Severity="Severity.Info">Giỏ hàng của bạn đang trống. <MudLink Href="/products">Tiếp tục mua sắm</MudLink></MudAlert>
+    }
+</MudContainer>
+
+@code {
+    private List<CartItemDto> _cartItems = new();
+    private decimal _subTotal = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ShoppingCartService.OnCartChanged += HandleCartChanged;
+        await LoadCart();
+    }
+
+    private async Task LoadCart()
+    {
+        _cartItems = await ShoppingCartService.GetCartItemsAsync();
+        _subTotal = _cartItems.Sum(i => i.Price * i.Quantity);
+    }
+    
+    private async void HandleCartChanged()
+    {
+        await InvokeAsync(async () =>
+        {
+            await LoadCart();
+            StateHasChanged();
+        });
+    }
+
+    private async Task UpdateQuantity(int productId, int quantity)
+    {
+        // Cập nhật lại giá trị trong danh sách để giao diện hiển thị đúng ngay lập tức
+        var item = _cartItems.FirstOrDefault(i => i.ProductId == productId);
+        if (item != null)
+        {
+            item.Quantity = quantity;
+        }
+
+        // Sau đó mới gọi service để cập nhật logic backend
+        await ShoppingCartService.UpdateQuantityAsync(productId, quantity);
+    }
+    
+    private async Task RemoveItem(int productId)
+    {
+        await ShoppingCartService.RemoveFromCartAsync(productId);
+    }
+
+    public void Dispose()
+    {
+        ShoppingCartService.OnCartChanged -= HandleCartChanged;
+    }
+}
+
