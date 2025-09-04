@@ -79,6 +79,7 @@ public class Startup
         // Đảm bảo thứ tự chính xác: Authentication -> Authorization
         app.UseAuthentication();
         app.UseAuthorization();
+        SeedDatabase(app); 
 
         app.UseEndpoints(endpoints =>
         {

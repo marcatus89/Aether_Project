@@ -10,40 +10,34 @@
 
 <MudContainer MaxWidth="MaxWidth.ExtraSmall" Class="mt-16 mb-16">
     <MudPaper Class="pa-8" Elevation="3">
-        <MudText Typo="Typo.h4" Style="font-family: var(--font-serif);" GutterBottom="true" Align="Align.Center">Welcome to Aether</MudText>
+        <MudText Typo="Typo.h4" Style="font-family: var(--font-serif);" GutterBottom="true" Align="Align.Center">Welcome
+            to Aether</MudText>
         <MudText Align="Align.Center" Class="mb-6">Sign In To Shopping.</MudText>
-        
+
         <EditForm Model="_model" OnValidSubmit="HandleLogin">
             <DataAnnotationsValidator />
-            
+
             @if (!string.IsNullOrEmpty(_errorMessage))
             {
                 <MudAlert Severity="Severity.Error" Class="mb-4">@_errorMessage</MudAlert>
             }
 
-            <MudTextField @bind-Value="_model.Email"
-                          Label="Email"
-                          For="@(() => _model.Email)"
-                          InputType="InputType.Email"
-                          Variant="Variant.Outlined"
-                          Class="mb-4" />
-            
-            <MudTextField @bind-Value="_model.Password"
-                          Label="Mật khẩu"
-                          For="@(() => _model.Password)"
-                          InputType="_isPasswordVisible ? InputType.Text : InputType.Password"
-                          Variant="Variant.Outlined"
-                          Class="mb-4" 
-                          Adornment="Adornment.End" 
-                          AdornmentIcon="@(_isPasswordVisible ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)" 
-                          OnAdornmentClick="@(() => _isPasswordVisible = !_isPasswordVisible)" />
+            <MudTextField @bind-Value="_model.Email" Label="Email" For="@(() => _model.Email)"
+                InputType="InputType.Email" Variant="Variant.Outlined" Class="mb-4" />
+
+            <MudTextField @bind-Value="_model.Password" Label="Mật khẩu" For="@(() => _model.Password)"
+                InputType="_isPasswordVisible? InputType.Text: InputType.Password" Variant="Variant.Outlined"
+                Class="mb-4" Adornment="Adornment.End"
+                AdornmentIcon="@(_isPasswordVisible? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                OnAdornmentClick="@(() => _isPasswordVisible = !_isPasswordVisible)" />
 
             <div class="d-flex justify-space-between align-center mb-4">
                 <MudCheckBox T="bool" @bind-Checked="_model.RememberMe" Label="Remmerber account" />
                 <MudLink Href="/forgot-password">Forget Password?</MudLink>
             </div>
-            
-            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" FullWidth="true" Disabled="_isSubmitting">
+
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
+                FullWidth="true" Disabled="_isSubmitting">
                 @if (_isSubmitting)
                 {
                     <MudProgressCircular Indeterminate="true" Size="Size.Small" />
@@ -54,7 +48,9 @@
                 }
             </MudButton>
         </EditForm>
-        <MudText Align="Align.Center" Class="mt-4">Don't have an account yet? <MudLink Href="/register">Đăng ký ngay</MudLink></MudText>
+        <MudText Align="Align.Center" Class="mt-4">Don't have an account yet? <MudLink Href="/register">Đăng ký ngay
+            </MudLink>
+        </MudText>
     </MudPaper>
 </MudContainer>
 
@@ -76,22 +72,10 @@
     private bool _isPasswordVisible = false;
     private string? _errorMessage;
 
-    private async Task HandleLogin()
-    {
-        _isSubmitting = true;
-        _errorMessage = null;
+ private async Task HandleLogin()
+{
 
-        var result = await SignInManager.PasswordSignInAsync(_model.Email, _model.Password, _model.RememberMe, lockoutOnFailure: false);
+    NavigationManager.NavigateTo("/Identity/Account/Login", forceLoad: true);
+}
 
-        if (result.Succeeded)
-        {
-            NavigationManager.NavigateTo("/");
-        }
-        else
-        {
-            _errorMessage = "Email or Password is not correct.";
-        }
-        
-        _isSubmitting = false;
-    }
 }
